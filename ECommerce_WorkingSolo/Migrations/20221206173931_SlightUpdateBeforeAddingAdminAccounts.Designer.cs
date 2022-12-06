@@ -4,6 +4,7 @@ using ECommerce_WorkingSolo.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerceWorkingSolo.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    partial class ECommerceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221206173931_SlightUpdateBeforeAddingAdminAccounts")]
+    partial class SlightUpdateBeforeAddingAdminAccounts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,8 +100,8 @@ namespace ECommerceWorkingSolo.Migrations
 
                     b.Property<string>("ZipCode")
                         .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -196,6 +199,19 @@ namespace ECommerceWorkingSolo.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 76,
+                            CategoryId = 8,
+                            Condition = 4,
+                            Description = "This is a mint condition Gameboy Advance SP Gaming console. Sold with no cartridges",
+                            ImagePath = "/images/gaming_consoles/gameboyadvancesp_gaming_console.jpg",
+                            Name = "Gameboy Advance Sp",
+                            Price = 176.82m,
+                            Rating = 4
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

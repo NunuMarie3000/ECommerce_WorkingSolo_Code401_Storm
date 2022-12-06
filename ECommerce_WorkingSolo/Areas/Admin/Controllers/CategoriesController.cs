@@ -7,10 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ECommerce_WorkingSolo.Areas.Identity.Data;
 using ECommerce_WorkingSolo.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 {
   [Area("Admin")]
+  [Authorize(Roles = "Admin")]
+  //[Authorize(Policy = "RequireAdminRole")]
   public class CategoriesController: Controller
   {
     private readonly ECommerceDbContext _context;
@@ -145,9 +148,19 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
         return Problem("Entity set 'ECommerceDbContext.Categories'  is null.");
       }
       var category = await _context.Categories.FindAsync(id);
+ 
       if (category != null)
       {
         _context.Categories.Remove(category);
+
+        //delete all associated products if you get rid of a category
+        var productQuery = await (from item in _context.Products
+                                  where item.CategoryId == id
+                                  select item).ToListAsync();
+        foreach (var item in productQuery)
+        {
+          _context.Products.Remove(item);
+        }
       }
 
       await _context.SaveChangesAsync();

@@ -9,12 +9,20 @@ builder.Services.AddDbContext<ECommerceDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+  // this is so we can use roles in our project
+  .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ECommerceDbContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddRazorPages();
+
+//builder.Services.AddAuthorization(options =>
+//{
+//  options.AddPolicy("RequireAdminRole",
+//       policy => policy.RequireRole("Admin"));
+//});
 
 // getting rid of making values not explicitly stated [required] from being required
 // so ModelState.IsValid is true when we create a new category and don't include a list of categoryproducts

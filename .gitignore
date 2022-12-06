@@ -351,3 +351,6 @@ MigrationBackup/
 
 # AppSettings
 appsettings.json
+
+#Migrations
+ECommerce_WorkingSolo/Migrations/0221206174312_AddAdminAccount.cs

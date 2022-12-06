@@ -7,10 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ECommerce_WorkingSolo.Areas.Identity.Data;
 using ECommerce_WorkingSolo.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 {
   [Area("Admin")]
+  [Authorize(Roles = "Admin")]
   public class ProductsController: Controller
   {
     private readonly ECommerceDbContext _context;
@@ -34,7 +37,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
         //                           where item.CategoryId== categoryId
         //                           select item).ToListAsync();
 
-        List<Product> list = await (from itm in _context.Products
+        List<Product> list = await (from itm in _context.Products.Include(p => p.Category)
                                     where itm.CategoryId == categoryId
                                     select new Product
                                     {
@@ -53,7 +56,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
         return View(list);
       }
 
-      return View(await _context.Products.ToListAsync());
+      return View(await _context.Products.Include(p => p.Category).ToListAsync());
     }
 
     // GET: Admin/Products/Details/5
@@ -98,19 +101,24 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     public async Task<IActionResult> Create( [Bind("Id,Name,Price,Description,Condition,Rating,ImagePath,CategoryId")] Product product )
     {
       // when new product is made, i need to create a new CategoryProduct object so i have reference between category and product
-      int categoryID = (int)ViewBag.CategoryID;
-      var cat = await _context.Categories.Where(cat => cat.Id == categoryID).FirstOrDefaultAsync();
+      var cat = await _context.Categories.Where(cat => cat.Id == product.CategoryId).FirstOrDefaultAsync();
+
       if (cat == null)
         return View("Index");
-      product.CategoryId = cat.Id;
-      product.Category = cat;
+
+
       if (ModelState.IsValid)
       {
+        product.Category = cat;
+        // also need to add this product to the category's product list
+        cat.ProductsList.Add(product);
+
         _context.Add(product);
         await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
+        //return RedirectToAction(nameof(Index));
+        return View(product);
       }
-      //return View(cat);
+
       return RedirectToAction(nameof(Index));
     }
 

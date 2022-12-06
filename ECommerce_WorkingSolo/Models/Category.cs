@@ -14,6 +14,6 @@ namespace ECommerce_WorkingSolo.Models
     public string Description { get; set; }
     public string ImagePath { get; set; }
     [ForeignKey("CategoryId")]
-    public List<Product> ProductsList { get; set; }
+    public List<Product> ProductsList { get; set; } = new List<Product>();
   }
 }

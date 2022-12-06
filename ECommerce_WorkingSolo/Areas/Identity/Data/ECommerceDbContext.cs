@@ -19,8 +19,8 @@ public class ECommerceDbContext: IdentityDbContext<ApplicationUser>
     // Customize the ASP.NET Identity model and override the defaults if needed.
     // For example, you can rename the ASP.NET Identity table names and more.
     // Add your customizations after calling base.OnModelCreating(builder);
-    int rdm = new Random().Next(9, 101);
-    builder.Entity<Product>().HasData(new Product { Id=rdm, CategoryId=8, Rating=Rating.MediumHigh, Price=176.82m, ImagePath="/images/gaming_consoles/gameboyadvancesp_gaming_console.jpg", Condition=Condition.UsedLikeNew, Description= "This is a mint condition Gameboy Advance SP Gaming console. Sold with no cartridges", Name="Gameboy Advance Sp" });
+    //int rdm = new Random().Next(9, 101);
+    //builder.Entity<Product>().HasData(new Product { Id=rdm, CategoryId=8, Rating=Rating.MediumHigh, Price=176.82m, ImagePath="/images/gaming_consoles/gameboyadvancesp_gaming_console.jpg", Condition=Condition.UsedLikeNew, Description= "This is a mint condition Gameboy Advance SP Gaming console. Sold with no cartridges", Name="Gameboy Advance Sp" });
   }
 
   public DbSet<Category> Categories { get; set; }

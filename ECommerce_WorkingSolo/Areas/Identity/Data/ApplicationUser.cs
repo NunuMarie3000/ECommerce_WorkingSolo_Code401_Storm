@@ -21,7 +21,7 @@ public class ApplicationUser : IdentityUser
   public string Address1 { get; set; }
   [StringLength(250)]
   public string Address2 { get; set; }
-  [StringLength(50)]
+  [StringLength(250)]
   public string ZipCode { get; set; }
   //public List<Product> ShoppingCart { get; set; }
 }
