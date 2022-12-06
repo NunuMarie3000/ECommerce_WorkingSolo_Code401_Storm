@@ -13,7 +13,6 @@ using System.Data;
 namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 {
   [Area("Admin")]
-  [Authorize(Roles = "Admin")]
   public class ProductsController: Controller
   {
     private readonly ECommerceDbContext _context;
@@ -24,6 +23,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     }
 
     // GET: Admin/Products
+    [Authorize(Roles = "Admin, Editor")]
     public async Task<IActionResult> Index( int? categoryId )
     {
       //ViewBag.Category = _context.Categories.Where(cat => cat.Id == categoryId).FirstOrDefault();
@@ -60,6 +60,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     }
 
     // GET: Admin/Products/Details/5
+    [Authorize(Roles = "Admin, Editor")]
     public async Task<IActionResult> Details( int? id )
     {
       if (id == null || _context.Products == null)
@@ -84,6 +85,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     }
 
     // GET: Admin/Products/Create
+    [Authorize(Roles = "Admin, Editor")]
     public IActionResult Create()
     {
       var a = Request.QueryString.Value;
@@ -98,6 +100,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [HttpPost]
     //[Route("Admin/Products/Create/{categoryId}")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin, Editor")]
     public async Task<IActionResult> Create( [Bind("Id,Name,Price,Description,Condition,Rating,ImagePath,CategoryId")] Product product )
     {
       // when new product is made, i need to create a new CategoryProduct object so i have reference between category and product
@@ -123,6 +126,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     }
 
     // GET: Admin/Products/Edit/5
+    [Authorize(Roles = "Admin, Editor")]
     public async Task<IActionResult> Edit( int? id )
     {
       if (id == null || _context.Products == null)
@@ -143,6 +147,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin, Editor")]
     public async Task<IActionResult> Edit( int id, [Bind("Id,Name,Price,Description,Condition,Rating,ImagePath")] Product product )
     {
       if (id != product.Id)
@@ -174,6 +179,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     }
 
     // GET: Admin/Products/Delete/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete( int? id )
     {
       if (id == null || _context.Products == null)
@@ -194,6 +200,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     // POST: Admin/Products/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteConfirmed( int id )
     {
       if (_context.Products == null)
