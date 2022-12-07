@@ -353,4 +353,4 @@ MigrationBackup/
 appsettings.json
 
 #Migrations
-./ECommerce_WorkingSolo/Oops_Migrations
+./ECommerce_WorkingSolo/Migrations
