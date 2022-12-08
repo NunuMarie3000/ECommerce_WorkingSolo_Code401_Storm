@@ -8,6 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using ECommerce_WorkingSolo.Areas.Identity.Data;
 using ECommerce_WorkingSolo.Models;
 using Microsoft.AspNetCore.Authorization;
+using ECommerce_WorkingSolo.Areas.Admin.Models;
+using ECommerce_WorkingSolo.Areas.Admin.Models.Interfaces;
+using System.IO;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 {
@@ -17,9 +21,12 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
   {
     private readonly ECommerceDbContext _context;
 
-    public CategoriesController( ECommerceDbContext context )
+    private readonly IImageService _imageService;
+
+    public CategoriesController( ECommerceDbContext context, IImageService imageservice )
     {
       _context = context;
+      _imageService = imageservice;
     }
 
     // GET: Admin/Categories
@@ -61,7 +68,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin, Editor")]
-    public async Task<IActionResult> Create( [Bind("Id,Name,Description,ImagePath,CategoryName")] Category category )
+    public async Task<IActionResult> Create( [Bind("Id,Name,Description,CategoryName,File,ImagePath")] Category category )
     {
       if (ModelState.IsValid)
       {
@@ -70,6 +77,29 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
         return RedirectToAction(nameof(Index));
       }
       return View(category);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult SavePicture( ImageFileModel imageModel )
+    {
+      var url = Request.GetDisplayUrl();
+
+      ViewBag.ImageModel = imageModel;
+
+      // if it already exists, that means we're updating it, so we wanna return to index
+      // if it doesn't exist, we're creating it and we need to return to create
+      bool doesItAlreadyExist = _imageService.DoesImageExist(imageModel.File);
+
+      var azureFile = _imageService.UploadImageToAzure(imageModel.File);
+
+      ViewBag.ImageUri = azureFile.Result.Url;
+
+      if(doesItAlreadyExist)
+      {
+        return RedirectToAction(nameof(Edit));
+      }
+      return View("Create");
     }
 
     // GET: Admin/Categories/Edit/5
@@ -168,6 +198,14 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
         {
           _context.Products.Remove(item);
         }
+
+        // get blobname out of the imagepath
+        string blobUrl = category.ImagePath;
+        int pos = blobUrl.LastIndexOf("/") + 1;
+        string blobName = blobUrl.Substring(pos, blobUrl.Length - pos);
+
+        // delete blob from blobstorage
+        _imageService.DeleteImageFromAzure(blobName);
       }
 
       await _context.SaveChangesAsync();

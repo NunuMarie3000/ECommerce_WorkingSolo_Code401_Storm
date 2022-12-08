@@ -355,4 +355,3 @@ appsettings.json
 #Migrations
 20221206190117_AddAdminAccount.cs
 20221206195231_AddEditorAccount.cs
-./Migrations

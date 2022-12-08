@@ -13,13 +13,13 @@
   <thead>
     <tr>
       <th>
+        @Html.DisplayName("Image")
+      </th>
+      <th>
         @Html.DisplayNameFor(model => model.Name)
       </th>
       <th>
         @Html.DisplayNameFor(model => model.Description)
-      </th>
-      <th>
-        @Html.DisplayNameFor(model => model.ImagePath)
       </th>
       <th></th>
     </tr>
@@ -29,13 +29,13 @@
     {
       <tr>
         <td>
+          <img class="w-25 h-auto" src="@item.ImagePath" />
+        </td>
+        <td>
           @Html.DisplayFor(modelItem => item.Name)
         </td>
         <td>
           @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-          @Html.DisplayFor(modelItem => item.ImagePath)
         </td>
         <td>
           <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

@@ -4,6 +4,9 @@ using ECommerce_WorkingSolo.Areas.Identity.Data;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Identity;
+using ECommerce_WorkingSolo.Areas.Admin.Models.Services;
+using ECommerce_WorkingSolo.Areas.Admin.Models.Interfaces;
+using ECommerce_WorkingSolo.Areas.Admin.Models.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ECommerceDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ECommerceDbContextConnection' not found.");
@@ -33,10 +36,10 @@ builder.Services.AddControllers(
     options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 
 // connecting to blob storage with connection string
-builder.Services.AddScoped(_ =>
-{
-  return new BlobServiceClient(builder.Configuration.GetConnectionString("AzureBlobStorage"));
-});
+//builder.Services.AddScoped(_ =>
+//{
+//  return new BlobServiceClient(builder.Configuration.GetConnectionString("AzureBlobStorage"));
+//});
 
 //builder.Services.AddScoped(b =>
 //{
@@ -53,6 +56,9 @@ builder.Services.AddScoped(_ =>
 
 //// create the container and return a container client object
 //BlobContainerClient containerClient = await blobServiceClient.CreateBlobContainerAsync(retroGamingBlobContainer);
+
+builder.Services.AddTransient<IImageService, ImageService>();
+builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("AzureStorageConfig"));
 
 var app = builder.Build();
 
@@ -88,20 +94,3 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
-
-////create local file in the ./data/ directory for uploading and downloading
-//string localPath = "data";
-//Directory.CreateDirectory(localPath);
-//string fileName = "myblobs" + Guid.NewGuid().ToString() + ".txt";
-//string localFilePath = Path.Combine(localPath, fileName);
-
-////write text to the file
-//await File.WriteAllTextAsync(localPath, "Hello World!");
-
-//// get a reference to a blob
-//BlobClient blobClient = containerClient.GetBlobClient(fileName);
-
-//Console.WriteLine("Uploading to Blob storage as blob:\n\t {0}\n", blobClient.Uri);
-
-//// upload data from the local file
-//await blobClient.UploadAsync(localFilePath, true);

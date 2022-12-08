@@ -135,7 +135,7 @@ namespace ECommerceWorkingSolo.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce_WorkingSolo.Models.CategoryProduct", b =>
@@ -156,7 +156,7 @@ namespace ECommerceWorkingSolo.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("CategoryProducts");
+                    b.ToTable("CategoryProducts", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce_WorkingSolo.Models.Product", b =>
@@ -195,7 +195,7 @@ namespace ECommerceWorkingSolo.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
