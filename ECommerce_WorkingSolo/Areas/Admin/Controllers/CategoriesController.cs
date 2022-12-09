@@ -12,11 +12,11 @@ using ECommerce_WorkingSolo.Areas.Admin.Models;
 using ECommerce_WorkingSolo.Areas.Admin.Models.Interfaces;
 using System.IO;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 {
   [Area("Admin")]
-  //[Authorize(Policy = "RequireAdminRole")]
   public class CategoriesController: Controller
   {
     private readonly ECommerceDbContext _context;
@@ -83,22 +83,12 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [ValidateAntiForgeryToken]
     public IActionResult SavePicture( ImageFileModel imageModel )
     {
-      var url = Request.GetDisplayUrl();
-
       ViewBag.ImageModel = imageModel;
-
-      // if it already exists, that means we're updating it, so we wanna return to index
-      // if it doesn't exist, we're creating it and we need to return to create
-      bool doesItAlreadyExist = _imageService.DoesImageExist(imageModel.File);
 
       var azureFile = _imageService.UploadImageToAzure(imageModel.File);
 
       ViewBag.ImageUri = azureFile.Result.Url;
 
-      if(doesItAlreadyExist)
-      {
-        return RedirectToAction(nameof(Edit));
-      }
       return View("Create");
     }
 
@@ -125,7 +115,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin, Editor")]
-    public async Task<IActionResult> Edit( int id, [Bind("Id,Name,Description,ImagePath")] Category category )
+    public async Task<IActionResult> Edit( int id, [Bind("Id,Name,Description,ImagePath")] Category category, [FromForm][Bind("FileDetails,File")] ImageFileModel imageModel )
     {
       if (id != category.Id)
       {
@@ -136,6 +126,9 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
       {
         try
         {
+
+          //EditPicture(imageModel);
+
           _context.Update(category);
           await _context.SaveChangesAsync();
         }
@@ -153,6 +146,27 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
         return RedirectToAction(nameof(Index));
       }
       return View(category);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult EditPicture(ImageFileModel imageModel)
+    {
+      //ViewBag.ImageModel = imageModel;
+
+      string blobUrl = imageModel.FileDetails;
+      int pos = blobUrl.LastIndexOf("/") + 1;
+      string blobName = blobUrl.Substring(pos, blobUrl.Length - pos);
+
+      _imageService.DeleteImageFromAzure(blobName);
+
+      var azureFile = _imageService.UploadImageToAzure(imageModel.File);
+
+      ViewBag.ImageUri = azureFile.Result.Url;
+
+      //return View("Edit");
+      //return RedirectToAction("Edit");
+      //return Redirect(http)
     }
 
     // GET: Admin/Categories/Delete/5

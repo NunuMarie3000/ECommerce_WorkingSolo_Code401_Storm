@@ -1,0 +1,32 @@
+﻿@model ECommerce_WorkingSolo.Areas.Admin.Models.ImageFileModel;
+
+<div>
+    @using (Html.BeginForm("EditPicture", "Categories", FormMethod.Post, new { enctype = "multipart/form-data" }))
+  {
+  @Html.AntiForgeryToken()
+
+  <div class="form-group">
+    <div>
+      @Html.LabelFor(m=>m.FileDetails, new{@class="form-label"})
+    </div>
+  </div>
+
+    @if (ViewData[ "currentImagePath" ] != null)
+    {
+      <div class="form-group">
+        <label hidden asp-for="FileDetails" class="control-label"></label>
+        <input hidden asp-for="FileDetails" class="form-control" value=@ViewData["currentImagePath"] />
+        <span asp-validation-for="FileDetails" class="text-danger"></span>
+      </div>
+    }
+
+    <div class="form-group">
+      <label asp-for="File" class="control-label"></label>
+      <input asp-for="File" class="form-control" />
+      <span asp-validation-for="File" class="text-danger"></span>
+    </div>
+
+      <button type="submit" class="btn btn-primary">Submit Image</button>
+  }
+
+</div>
