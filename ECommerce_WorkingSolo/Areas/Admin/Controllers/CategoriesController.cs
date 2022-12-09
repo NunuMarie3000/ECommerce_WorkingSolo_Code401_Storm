@@ -13,6 +13,7 @@ using ECommerce_WorkingSolo.Areas.Admin.Models.Interfaces;
 using System.IO;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 {
@@ -34,6 +35,45 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     public async Task<IActionResult> Index()
     {
       return View(await _context.Categories.ToListAsync());
+    }
+
+    // get
+    [HttpGet]
+    [Route("Admin/Categories/EditPicture/{categoryId}/{imagePath}")]
+    public IActionResult EditPicture()
+    {
+      return View("EditImagePartial");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Route("Admin/Categories/EditPicture/{categoryId}/{imagePath}")]
+    public async Task<IActionResult> EditPicture( [Bind("FileDetails, File")]ImageFileModel imageModel, int categoryId, string imagePath )
+    {
+      // get blobname out of the imagepath
+      string blobUrl = imagePath;
+      int pos = blobUrl.LastIndexOf("%") + 1;
+      string blobName = blobUrl.Substring(pos, blobUrl.Length - pos);
+      string name = blobName.Substring(2);
+
+      // first, delete current url from blobstorage
+      _imageService.DeleteImageFromAzure(name);
+
+      // next, upload new image to azure
+      var azureFile = _imageService.UploadImageToAzure(imageModel.File);
+
+      // now update the category's imagepath property in the database
+      var cat = _context.Categories.Where(c=> c.Id == categoryId).FirstOrDefault();
+      cat.ImagePath = azureFile.Result.Url;
+
+      // not entirely sure what this is doing, so i'll keep it for now 
+      ViewBag.ImageUri = azureFile.Result.Url;
+
+      // save the database
+      await _context.SaveChangesAsync();
+
+      return RedirectToAction("Edit", new {id = categoryId});
+
     }
 
     // GET: Admin/Categories/Details/5
@@ -115,7 +155,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin, Editor")]
-    public async Task<IActionResult> Edit( int id, [Bind("Id,Name,Description,ImagePath")] Category category, [FromForm][Bind("FileDetails,File")] ImageFileModel imageModel )
+    public async Task<IActionResult> Edit( int id, [Bind("Id,Name,Description,ImagePath")] Category category )
     {
       if (id != category.Id)
       {
@@ -148,26 +188,6 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
       return View(category);
     }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult EditPicture(ImageFileModel imageModel)
-    {
-      //ViewBag.ImageModel = imageModel;
-
-      string blobUrl = imageModel.FileDetails;
-      int pos = blobUrl.LastIndexOf("/") + 1;
-      string blobName = blobUrl.Substring(pos, blobUrl.Length - pos);
-
-      _imageService.DeleteImageFromAzure(blobName);
-
-      var azureFile = _imageService.UploadImageToAzure(imageModel.File);
-
-      ViewBag.ImageUri = azureFile.Result.Url;
-
-      //return View("Edit");
-      //return RedirectToAction("Edit");
-      //return Redirect(http)
-    }
 
     // GET: Admin/Categories/Delete/5
     [Authorize(Roles = "Admin")]
