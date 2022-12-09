@@ -68,7 +68,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin, Editor")]
-    public async Task<IActionResult> Create( [Bind("Id,Name,Description,CategoryName,File,ImagePath")] Category category )
+    public async Task<IActionResult> Create( [Bind("Id,Name,Description,CategoryName,ImagePath")] Category category )
     {
       if (ModelState.IsValid)
       {

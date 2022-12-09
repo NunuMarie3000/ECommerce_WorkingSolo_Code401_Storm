@@ -35,28 +35,6 @@ builder.Services.AddRazorPages();
 builder.Services.AddControllers(
     options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 
-// connecting to blob storage with connection string
-//builder.Services.AddScoped(_ =>
-//{
-//  return new BlobServiceClient(builder.Configuration.GetConnectionString("AzureBlobStorage"));
-//});
-
-//builder.Services.AddScoped(b =>
-//{
-//  return new BlobServiceClient(builder.Configuration.GetConnectionString("AzureBlobStorage"));
-//});
-
-//// connecting to our blob storage
-//var blobServiceClient = new BlobServiceClient(
-//  new Uri("https://stormfirststorageaccount.blob.core.windows.net"),
-//  new DefaultAzureCredential());
-
-////create name for the container
-//string retroGamingBlobContainer = "retrogamingblobs" + Guid.NewGuid().ToString();
-
-//// create the container and return a container client object
-//BlobContainerClient containerClient = await blobServiceClient.CreateBlobContainerAsync(retroGamingBlobContainer);
-
 builder.Services.AddTransient<IImageService, ImageService>();
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("AzureStorageConfig"));
 
