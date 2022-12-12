@@ -9,6 +9,8 @@ using ECommerce_WorkingSolo.Areas.Identity.Data;
 using ECommerce_WorkingSolo.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using ECommerce_WorkingSolo.Areas.Admin.Models.Interfaces;
+using ECommerce_WorkingSolo.Areas.Admin.Models;
 
 namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 {
@@ -16,26 +18,21 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
   public class ProductsController: Controller
   {
     private readonly ECommerceDbContext _context;
+    private readonly IImageService _imageService;
 
-    public ProductsController( ECommerceDbContext context )
+    public ProductsController( ECommerceDbContext context, IImageService imageService )
     {
       _context = context;
+      _imageService = imageService;
     }
 
     // GET: Admin/Products
     [Authorize(Roles = "Admin, Editor")]
     public async Task<IActionResult> Index( int? categoryId )
     {
-      //ViewBag.Category = _context.Categories.Where(cat => cat.Id == categoryId).FirstOrDefault();
-      //var chosencategory = await _context.Categories.Where(cat => cat.Id== categoryId).FirstOrDefaultAsync();
-      //ViewBag.ChosenCategory = chosencategory;
       if (categoryId != null)
       {
         ViewBag.CategoryId = categoryId;
-
-        //List<Product> list = await (from item in _context.Products
-        //                           where item.CategoryId== categoryId
-        //                           select item).ToListAsync();
 
         List<Product> list = await (from itm in _context.Products.Include(p => p.Category)
                                     where itm.CategoryId == categoryId
@@ -86,19 +83,21 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 
     // GET: Admin/Products/Create
     [Authorize(Roles = "Admin, Editor")]
-    public IActionResult Create()
+    [Route("Admin/Products/Create/{categoryId}")]
+    public IActionResult Create(int? categoryId)
     {
-      var a = Request.QueryString.Value;
-      var categoryid = a.Split(new char[] { '=' }, 2);
-      ViewBag.CategoryID = categoryid[1];
+      //var a = Request.Path.Value;
+      //var categoryid = a.Split(new char[] { '/' }, 5);
+      //if(categoryid.Length == 5)
+      //  ViewBag.CategoryID = categoryid[ 4 ];
+      if (categoryId != null)
+        ViewBag.CategoryID = categoryId;
       return View();
     }
 
     // POST: Admin/Products/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
-    //[Route("Admin/Products/Create/{categoryId}")]
+    [Route("Admin/Products/Create")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin, Editor")]
     public async Task<IActionResult> Create( [Bind("Id,Name,Price,Description,Condition,Rating,ImagePath,CategoryId")] Product product )
@@ -109,7 +108,6 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
       if (cat == null)
         return View("Index");
 
-
       if (ModelState.IsValid)
       {
         product.Category = cat;
@@ -118,11 +116,24 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 
         _context.Add(product);
         await _context.SaveChangesAsync();
-        //return RedirectToAction(nameof(Index));
-        return View(product);
       }
+      return RedirectToAction("Index", new { categoryId = cat.Id });
+    }
 
-      return RedirectToAction(nameof(Index));
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Route("Admin/Products/SavePicture")]
+    public IActionResult SavePicture( ImageFileModel imageModel )
+    {
+      int catId = Convert.ToInt32(imageModel.FileDetails);
+      ViewBag.ImageModel = imageModel;
+
+      var azureFile = _imageService.UploadImageToAzure(imageModel.File);
+
+      // keeps saying i need to pass it a product object, so imma do something sketchy
+      ViewBag.AzureUrl = new Product { Name= azureFile.Result.Url, CategoryId=catId };
+
+      return View("Create", new Product {CategoryId=catId});
     }
 
     // GET: Admin/Products/Edit/5
@@ -148,7 +159,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin, Editor")]
-    public async Task<IActionResult> Edit( int id, [Bind("Id,Name,Price,Description,Condition,Rating,ImagePath")] Product product )
+    public async Task<IActionResult> Edit( int id, [Bind("Id,Name,Price,Description,Condition,Rating,ImagePath,CategoryId")] Product product )
     {
       if (id != product.Id)
       {
@@ -176,6 +187,49 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
         return RedirectToAction(nameof(Index));
       }
       return View(product);
+    }
+
+    // get
+    [HttpGet]
+    [Route("Admin/Products/EditPicture/{categoryId}/{imagePath}")]
+    public IActionResult EditPicture()
+    {
+      return View("EditImagePartial");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Route("Admin/Products/EditPicture/{productId}/{imagePath}")]
+    public async Task<IActionResult> EditPicture( [Bind("FileDetails, File")] ImageFileModel imageModel, int productId, string imagePath )
+    {
+      // get blobname out of the imagepath
+      string blobUrl = imagePath;
+      int pos = blobUrl.LastIndexOf("%") + 1;
+      string blobName = blobUrl.Substring(pos, blobUrl.Length - pos);
+      string name = blobName.Substring(2);
+
+      // first, delete current url from blobstorage
+      _imageService.DeleteImageFromAzure(name);
+
+      // next, upload new image to azure
+      var azureFile = _imageService.UploadImageToAzure(imageModel.File);
+
+      // now update the category's imagepath property in the database
+      //var cat = _context.Categories.Where(c => c.Id == categoryId).FirstOrDefault();
+      //cat.ImagePath = azureFile.Result.Url;
+
+      // update the product's imagepath property in the database
+      var pro = _context.Products.Where(p => p.Id== productId).FirstOrDefault();
+      pro.ImagePath = azureFile.Result.Url;
+
+      // not entirely sure what this is doing, so i'll keep it for now 
+      ViewBag.ImageUri = azureFile.Result.Url;
+
+      // save the database
+      await _context.SaveChangesAsync();
+
+      return RedirectToAction("Edit", new { id = productId });
+
     }
 
     // GET: Admin/Products/Delete/5
@@ -211,9 +265,18 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
       if (product != null)
       {
         _context.Products.Remove(product);
+
+        // get blobname out of the imagepath
+        string blobUrl = product.ImagePath;
+        int pos = blobUrl.LastIndexOf("/") + 1;
+        string blobName = blobUrl.Substring(pos, blobUrl.Length - pos);
+
+        // delete blob from blobstorage
+        _imageService.DeleteImageFromAzure(blobName);
+
+        await _context.SaveChangesAsync();
       }
 
-      await _context.SaveChangesAsync();
       return RedirectToAction(nameof(Index));
     }
 

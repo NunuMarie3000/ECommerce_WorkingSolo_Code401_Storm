@@ -9,6 +9,11 @@
 <h4>Product</h4>
 <hr />
 <div class="row">
+  <a asp-action="EditPicture" asp-route-categoryId="@Model.Id" asp-route-imagePath="@Model.ImagePath"><img class="w-25 h-auto" src=@Model.ImagePath /></a>
+</div>
+<div class="row">
+</div>
+<div class="row">
   <div class="col-md-4">
     <form asp-action="Edit">
       <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -18,11 +23,11 @@
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
       </div>
-@*      <div class="form-group">
-        <label asp-for="CategoryName" class="control-label"></label>
-        <input asp-for="CategoryName" class="form-control" />
-        <span asp-validation-for="CategoryName" class="text-danger"></span>
-      </div>*@
+      <div class="form-group">
+        <label asp-for="CategoryId" class="control-label"></label>
+        <input hidden asp-for="CategoryId" class="form-control" />
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+      </div>
       <div class="form-group">
         <label asp-for="Price" class="control-label"></label>
         <input asp-for="Price" class="form-control" />
@@ -35,12 +40,22 @@
       </div>
       <div class="form-group">
         <label asp-for="Condition" class="control-label"></label>
-        <select asp-for="Condition" class="form-control"></select>
+        <select asp-for="Condition" class="form-control">
+          @foreach (var con in Enum.GetValues(typeof(Condition)))
+          {
+            <option value="@con">@con</option>
+          }
+        </select>
         <span asp-validation-for="Condition" class="text-danger"></span>
       </div>
       <div class="form-group">
         <label asp-for="Rating" class="control-label"></label>
-        <select asp-for="Rating" class="form-control"></select>
+        <select asp-for="Rating" class="form-control">
+          @foreach (var con in Enum.GetValues(typeof(Rating)))
+          {
+            <option value="@con">@con</option>
+          }
+        </select>
         <span asp-validation-for="Rating" class="text-danger"></span>
       </div>
       <div class="form-group">
