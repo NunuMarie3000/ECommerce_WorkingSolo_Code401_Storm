@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,16 +13,21 @@ namespace ECommerce_WorkingSolo.Areas.Identity.Data;
 public class ApplicationUser : IdentityUser
 {
   [StringLength(250)]
+  [Display(Name ="First Name")]
   public string FirstName { get; set; }
   [StringLength(250)]
+  [Display(Name = "Last Name")]
   public string LastName { get; set; }
   [StringLength(250)]
   public string Email { get; set; }
   [StringLength(250)]
+  [Display(Name = "Address 1")]
   public string Address1 { get; set; }
   [StringLength(250)]
+  [Display(Name = "Address 1")]
   public string Address2 { get; set; }
   [StringLength(250)]
+  [Display(Name = "Zip Code")]
   public string ZipCode { get; set; }
   //public List<Product> ShoppingCart { get; set; }
 }

@@ -7,6 +7,8 @@ using Azure.Identity;
 using ECommerce_WorkingSolo.Areas.Admin.Models.Services;
 using ECommerce_WorkingSolo.Areas.Admin.Models.Interfaces;
 using ECommerce_WorkingSolo.Areas.Admin.Models.Options;
+using ECommerce_WorkingSolo.Areas.Identity.Pages.Account;
+using ECommerce_WorkingSolo.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ECommerceDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ECommerceDbContextConnection' not found.");
@@ -15,9 +17,8 @@ builder.Services.AddDbContext<ECommerceDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-  // this is so we can use roles in our project
   .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ECommerceDbContext>();
+  .AddEntityFrameworkStores<ECommerceDbContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -26,8 +27,8 @@ builder.Services.AddRazorPages();
 
 //builder.Services.AddAuthorization(options =>
 //{
-//  options.AddPolicy("RequireAdminRole",
-//       policy => policy.RequireRole("Admin"));
+//  options.AddPolicy("readpolicy", builder => builder.RequireRole("Admin", "Editor", "Shopper"));
+//  options.AddPolicy("writepolicy", builder => builder.RequireRole("Admin", "Editor"));
 //});
 
 // getting rid of making values not explicitly stated [required] from being required
@@ -36,6 +37,9 @@ builder.Services.AddControllers(
     options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 
 builder.Services.AddTransient<IImageService, ImageService>();
+
+//builder.Services.AddTransient<IUserRoleStore<ApplicationUser>, UserRoleStore>();
+
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("AzureStorageConfig"));
 
 var app = builder.Build();

@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using ECommerce_WorkingSolo.Models;
 
 namespace ECommerce_WorkingSolo.Areas.Identity.Pages.Account
 {
@@ -30,13 +32,22 @@ namespace ECommerce_WorkingSolo.Areas.Identity.Pages.Account
     private readonly IUserEmailStore<ApplicationUser> _emailStore;
     private readonly ILogger<RegisterModel> _logger;
     private readonly IEmailSender _emailSender;
+    private readonly ECommerceDbContext _context;
+    //private readonly RoleManager<ApplicationUser> _roleManager;
+    //private readonly IUserRoleStore<ApplicationUser> _userRoleStore;
+    //private readonly UserRoleStore _userRoleStore;
 
     public RegisterModel(
         UserManager<ApplicationUser> userManager,
         IUserStore<ApplicationUser> userStore,
         SignInManager<ApplicationUser> signInManager,
         ILogger<RegisterModel> logger,
-        IEmailSender emailSender )
+        IEmailSender emailSender,
+        ECommerceDbContext context
+        //RoleManager<ApplicationUser> roleManager
+        //IUserRoleStore<ApplicationUser> userRoleStore
+        //UserRoleStore userRoleStore
+      )
     {
       _userManager = userManager;
       _userStore = userStore;
@@ -44,62 +55,55 @@ namespace ECommerce_WorkingSolo.Areas.Identity.Pages.Account
       _signInManager = signInManager;
       _logger = logger;
       _emailSender = emailSender;
+      _context = context;
+      //_roleManager = roleManager;
+      //_userRoleStore= userRoleStore;
+      //_userRoleStore= userRoleStore;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+
     [BindProperty]
     public InputModel Input { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     public string ReturnUrl { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
-    public class InputModel
+    public class InputModel 
     {
-      /// <summary>
-      ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-      ///     directly from your code. This API may change or be removed in future releases.
-      /// </summary>
       [Required]
       [EmailAddress]
       [Display(Name = "Email")]
       public string Email { get; set; }
 
-      /// <summary>
-      ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-      ///     directly from your code. This API may change or be removed in future releases.
-      /// </summary>
       [Required]
       [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
       [DataType(DataType.Password)]
       [Display(Name = "Password")]
       public string Password { get; set; }
 
-      /// <summary>
-      ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-      ///     directly from your code. This API may change or be removed in future releases.
-      /// </summary>
       [DataType(DataType.Password)]
       [Display(Name = "Confirm password")]
       [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
       public string ConfirmPassword { get; set; }
-    }
 
+      [StringLength(250)]
+      [Display(Name = "First Name")]
+      public string FirstName { get; set; }
+      [StringLength(250)]
+      [Display(Name = "Last Name")]
+      public string LastName { get; set; }
+      [StringLength(250)]
+      [Display(Name = "Address 1")]
+      public string Address1 { get; set; }
+      [Display(Name ="Address 2")]
+      public string Address2 { get; set; }
+
+      [StringLength(250)]
+      [Display(Name = "Zip Code")]
+      public string ZipCode { get; set; }
+      public string PhoneNumber { get; set; } 
+    }
 
     public async Task OnGetAsync( string returnUrl = null )
     {
@@ -111,13 +115,23 @@ namespace ECommerce_WorkingSolo.Areas.Identity.Pages.Account
     {
       returnUrl ??= Url.Content("~/");
       ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+      //var role = _roleManager.FindByNameAsync("Shopper").Result;
       if (ModelState.IsValid)
       {
         var user = CreateUser();
 
+        user.FirstName = Input.FirstName; user.LastName = Input.LastName; user.Email= Input.Email; user.Address1 = Input.Address1; user.Address2 = Input.Address2; user.PhoneNumber = Input.PhoneNumber; user.ZipCode = Input.ZipCode;
+
         await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+        // adding 'shopper' role to user when they create an account
+        await _userManager.AddToRoleAsync(user, "Shopper");
         var result = await _userManager.CreateAsync(user, Input.Password);
+
+        //test code
+        //await _userRoleStore.AddToRoleAsync(user, "Shopper", CancellationToken.None);
+        //_context.UserRoles.
+        //test code 
 
         if (result.Succeeded)
         {
@@ -159,7 +173,9 @@ namespace ECommerce_WorkingSolo.Areas.Identity.Pages.Account
     {
       try
       {
-        return Activator.CreateInstance<ApplicationUser>();
+        //return Activator.CreateInstance<ApplicationUser>();
+        var user = Activator.CreateInstance<ApplicationUser>();
+        return user;
       }
       catch
       {

@@ -355,3 +355,4 @@ appsettings.json
 #Migrations
 20221206190117_AddAdminAccount.cs
 20221206195231_AddEditorAccount.cs
+20221212190209_AddShopperRole.cs

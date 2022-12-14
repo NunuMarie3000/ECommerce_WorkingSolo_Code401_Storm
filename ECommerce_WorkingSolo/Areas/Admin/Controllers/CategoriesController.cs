@@ -113,6 +113,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
       if (ModelState.IsValid)
       {
         _context.Add(category);
+
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
       }

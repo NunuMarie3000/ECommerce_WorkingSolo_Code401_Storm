@@ -1,0 +1,41 @@
+﻿@using ECommerce_WorkingSolo.Areas.Identity.Data;
+@using Microsoft.AspNetCore.Identity;
+@model ECommerce_WorkingSolo.Models.Product
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+  ViewData[ "Title" ] = "Details";
+}
+
+<h1>@Model.Name</h1>
+
+<div class="card-container">
+  <div class="card" style="width: 30rem;">
+    <img class="card-img-top" src="@Model.ImagePath" alt="@Model.Description">
+    <div class="card-body">
+      <div class="list-group list-group-flush">
+        <h4 class="list-group-item">@Model.Name</h4>
+        <p class="list-group-item">
+          @Model.Description
+          <br />
+          $@Model.Price
+          <br />
+          @Convert.ToInt32(Model.Rating)/5 Stars
+        </p>
+      </div>
+
+      @if (SignInManager.IsSignedIn(User))
+      {
+        if (await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "shopper") || await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "admin") || await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "editor"))
+        {
+          <h3 class="btn">Add to Cart <i class="fa-solid fa-cart-plus"></i></h3>
+        }
+      }
+    </div>
+  </div>
+</div>
+  <div>
+    <a class="btn btn-primary" asp-action="Index">Back to All Products</a>
+  </div>
