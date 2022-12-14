@@ -48,7 +48,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Route("Admin/Categories/EditPicture/{categoryId}/{imagePath}")]
-    public async Task<IActionResult> EditPicture( [Bind("FileDetails, File")]ImageFileModel imageModel, int categoryId, string imagePath )
+    public async Task<IActionResult> EditPicture( [Bind("FileDetails, File")]ImageFileModel imageModel, string categoryId, string imagePath )
     {
       // get blobname out of the imagepath
       string blobUrl = imagePath;
@@ -78,7 +78,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 
     // GET: Admin/Categories/Details/5
     [Authorize(Roles = "Admin, Editor")]
-    public async Task<IActionResult> Details( int? id )
+    public async Task<IActionResult> Details( string? id )
     {
       if (id == null || _context.Categories == null)
       {
@@ -135,7 +135,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 
     // GET: Admin/Categories/Edit/5
     [Authorize(Roles = "Admin, Editor")]
-    public async Task<IActionResult> Edit( int? id )
+    public async Task<IActionResult> Edit( string? id )
     {
       if (id == null || _context.Categories == null)
       {
@@ -156,7 +156,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin, Editor")]
-    public async Task<IActionResult> Edit( int id, [Bind("Id,Name,Description,ImagePath")] Category category )
+    public async Task<IActionResult> Edit( string id, [Bind("Id,Name,Description,ImagePath")] Category category )
     {
       if (id != category.Id)
       {
@@ -192,7 +192,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 
     // GET: Admin/Categories/Delete/5
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Delete( int? id )
+    public async Task<IActionResult> Delete( string? id )
     {
       if (id == null || _context.Categories == null)
       {
@@ -213,7 +213,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> DeleteConfirmed( int id )
+    public async Task<IActionResult> DeleteConfirmed( string id )
     {
       if (_context.Categories == null)
       {
@@ -247,7 +247,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
       return RedirectToAction(nameof(Index));
     }
 
-    private bool CategoryExists( int id )
+    private bool CategoryExists( string id )
     {
       return _context.Categories.Any(e => e.Id == id);
     }

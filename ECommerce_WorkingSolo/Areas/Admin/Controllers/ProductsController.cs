@@ -28,7 +28,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 
     // GET: Admin/Products
     [Authorize(Roles = "Admin, Editor")]
-    public async Task<IActionResult> Index( int? categoryId )
+    public async Task<IActionResult> Index( string? categoryId )
     {
       if (categoryId != null)
       {
@@ -38,7 +38,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
                                     where itm.CategoryId == categoryId
                                     select new Product
                                     {
-                                      CategoryId = (int)categoryId,
+                                      CategoryId = (string)categoryId,
                                       Name = itm.Name,
                                       Id = itm.Id,
                                       Condition = itm.Condition,
@@ -58,7 +58,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 
     // GET: Admin/Products/Details/5
     [Authorize(Roles = "Admin, Editor")]
-    public async Task<IActionResult> Details( int? id )
+    public async Task<IActionResult> Details( string? id )
     {
       if (id == null || _context.Products == null)
       {
@@ -84,7 +84,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     // GET: Admin/Products/Create
     [Authorize(Roles = "Admin, Editor")]
     [Route("Admin/Products/Create/{categoryId}")]
-    public IActionResult Create(int? categoryId)
+    public IActionResult Create( string? categoryId)
     {
       //var a = Request.Path.Value;
       //var categoryid = a.Split(new char[] { '/' }, 5);
@@ -125,7 +125,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [Route("Admin/Products/SavePicture")]
     public IActionResult SavePicture( ImageFileModel imageModel )
     {
-      int catId = Convert.ToInt32(imageModel.FileDetails);
+      string catId = imageModel.FileDetails;
       ViewBag.ImageModel = imageModel;
 
       var azureFile = _imageService.UploadImageToAzure(imageModel.File);
@@ -138,7 +138,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 
     // GET: Admin/Products/Edit/5
     [Authorize(Roles = "Admin, Editor")]
-    public async Task<IActionResult> Edit( int? id )
+    public async Task<IActionResult> Edit( string? id )
     {
       if (id == null || _context.Products == null)
       {
@@ -159,7 +159,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin, Editor")]
-    public async Task<IActionResult> Edit( int id, [Bind("Id,Name,Price,Description,Condition,Rating,ImagePath,CategoryId")] Product product )
+    public async Task<IActionResult> Edit( string id, [Bind("Id,Name,Price,Description,Condition,Rating,ImagePath,CategoryId")] Product product )
     {
       if (id != product.Id)
       {
@@ -200,7 +200,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Route("Admin/Products/EditPicture/{productId}/{imagePath}")]
-    public async Task<IActionResult> EditPicture( [Bind("FileDetails, File")] ImageFileModel imageModel, int productId, string imagePath )
+    public async Task<IActionResult> EditPicture( [Bind("FileDetails, File")] ImageFileModel imageModel, string productId, string imagePath )
     {
       // get blobname out of the imagepath
       string blobUrl = imagePath;
@@ -234,7 +234,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 
     // GET: Admin/Products/Delete/5
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Delete( int? id )
+    public async Task<IActionResult> Delete( string? id )
     {
       if (id == null || _context.Products == null)
       {
@@ -255,7 +255,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> DeleteConfirmed( int id )
+    public async Task<IActionResult> DeleteConfirmed( string id )
     {
       if (_context.Products == null)
       {
@@ -280,7 +280,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
       return RedirectToAction(nameof(Index));
     }
 
-    private bool ProductExists( int id )
+    private bool ProductExists( string id )
     {
       return _context.Products.Any(e => e.Id == id);
     }

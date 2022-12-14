@@ -4,11 +4,11 @@ namespace ECommerce_WorkingSolo.Models
 {
   public class CategoryProduct
   {
-    public int Id { get; set; }
+    public string Id { get; set; }
     [Required]
-    public int ProductId { get; set; }
+    public string ProductId { get; set; }
     [Required]
-    public int CategoryId { get; set; }
+    public string CategoryId { get; set; }
 
   }
 }

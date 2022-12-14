@@ -4,6 +4,7 @@ using ECommerce_WorkingSolo.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerceWorkingSolo.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    partial class ECommerceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221214173107_CreatedShoppingCartClassAndAddedToApplicationUserClass")]
+    partial class CreatedShoppingCartClassAndAddedToApplicationUserClass
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,7 +141,7 @@ namespace ECommerceWorkingSolo.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("ECommerce_WorkingSolo.Models.CategoryProduct", b =>
@@ -159,7 +162,7 @@ namespace ECommerceWorkingSolo.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("CategoryProducts", (string)null);
+                    b.ToTable("CategoryProducts");
                 });
 
             modelBuilder.Entity("ECommerce_WorkingSolo.Models.Product", b =>
@@ -203,7 +206,7 @@ namespace ECommerceWorkingSolo.Migrations
 
                     b.HasIndex("ShoppingCartId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("ECommerce_WorkingSolo.Models.ShoppingCart", b =>
@@ -214,13 +217,12 @@ namespace ECommerceWorkingSolo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("UserID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ShoppingCart", (string)null);
+                    b.ToTable("ShoppingCart");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

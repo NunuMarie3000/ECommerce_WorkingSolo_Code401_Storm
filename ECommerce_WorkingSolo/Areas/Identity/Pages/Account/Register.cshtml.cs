@@ -136,6 +136,10 @@ namespace ECommerce_WorkingSolo.Areas.Identity.Pages.Account
         if (result.Succeeded)
         {
           await _userManager.AddToRoleAsync(user, "Shopper");
+          // create new instance of empty shopping cart and add it to the new user
+          //var userCart = new ShoppingCart();
+          //userCart.UserID = user.Id;
+          //user.ShoppingCartId = userCart.Id;
           _logger.LogInformation("User created a new account with password.");
 
           var userId = await _userManager.GetUserIdAsync(user);

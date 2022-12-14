@@ -32,7 +32,7 @@ namespace ECommerce_WorkingSolo.Controllers
 
     // GET: Products/Details/5
     //[Authorize(Roles = "Shopper, Admin, Editor")]
-    public async Task<IActionResult> Details( int? id )
+    public async Task<IActionResult> Details( string? id )
     {
       if (id == null || _context.Products == null)
       {
@@ -50,7 +50,7 @@ namespace ECommerce_WorkingSolo.Controllers
       return View(product);
     }
 
-    private bool ProductExists( int id )
+    private bool ProductExists( string id )
     {
       return _context.Products.Any(e => e.Id == id);
     }

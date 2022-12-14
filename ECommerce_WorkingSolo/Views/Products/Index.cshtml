@@ -1,4 +1,10 @@
-﻿@model IEnumerable<ECommerce_WorkingSolo.Models.Product>
+﻿@using ECommerce_WorkingSolo.Areas.Identity.Data;
+@using Microsoft.AspNetCore.Identity;
+
+@inject UserManager<ApplicationUser> UserManager;
+@inject SignInManager<ApplicationUser> SignInManager;
+
+@model IEnumerable<ECommerce_WorkingSolo.Models.Product>
 
 @{
   ViewData[ "Title" ] = "Index";
@@ -14,6 +20,13 @@
       <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id"><img class="card-img-top" src="@item.ImagePath" alt="@item.Description"></a>
       <div class="card-body">
         <h5 class="card-title">@item.Name</h5>
+        @if (SignInManager.IsSignedIn(User))
+        {
+          if (await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "shopper") || await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "admin") || await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "editor"))
+          {
+            <a asp-controller="Transactions" asp-action="AddToCart" asp-route-id="@item.Id" class="btn"><h3>Add to Cart <i class="fa-solid fa-cart-plus"></i></h3></a>
+          }
+        }
       </div>
     </div>
   }
