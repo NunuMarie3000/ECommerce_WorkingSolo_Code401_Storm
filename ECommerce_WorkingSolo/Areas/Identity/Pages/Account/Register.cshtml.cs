@@ -45,8 +45,8 @@ namespace ECommerce_WorkingSolo.Areas.Identity.Pages.Account
         IEmailSender emailSender,
         ECommerceDbContext context
         //RoleManager<ApplicationUser> roleManager
-        //IUserRoleStore<ApplicationUser> userRoleStore
-        //UserRoleStore userRoleStore
+      //IUserRoleStore<ApplicationUser> userRoleStore
+      //UserRoleStore userRoleStore
       )
     {
       _userManager = userManager;
@@ -116,25 +116,26 @@ namespace ECommerce_WorkingSolo.Areas.Identity.Pages.Account
       returnUrl ??= Url.Content("~/");
       ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
       //var role = _roleManager.FindByNameAsync("Shopper").Result;
+      //var role = _roleManager.FindByIdAsync()
       if (ModelState.IsValid)
       {
         var user = CreateUser();
 
         user.FirstName = Input.FirstName; user.LastName = Input.LastName; user.Email= Input.Email; user.Address1 = Input.Address1; user.Address2 = Input.Address2; user.PhoneNumber = Input.PhoneNumber; user.ZipCode = Input.ZipCode;
 
+        // test code
+
+        // test code
+
         await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
         // adding 'shopper' role to user when they create an account
-        await _userManager.AddToRoleAsync(user, "Shopper");
+        
         var result = await _userManager.CreateAsync(user, Input.Password);
-
-        //test code
-        //await _userRoleStore.AddToRoleAsync(user, "Shopper", CancellationToken.None);
-        //_context.UserRoles.
-        //test code 
 
         if (result.Succeeded)
         {
+          await _userManager.AddToRoleAsync(user, "Shopper");
           _logger.LogInformation("User created a new account with password.");
 
           var userId = await _userManager.GetUserIdAsync(user);
