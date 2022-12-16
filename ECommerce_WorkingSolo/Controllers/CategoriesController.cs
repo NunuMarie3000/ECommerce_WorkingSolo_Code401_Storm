@@ -26,7 +26,7 @@ namespace ECommerce_WorkingSolo.Controllers
         }
 
         // GET: Categories/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details( string? id)
         {
             if (id == null || _context.Categories == null)
             {
@@ -43,7 +43,7 @@ namespace ECommerce_WorkingSolo.Controllers
             return View(category);
         }
 
-        private bool CategoryExists(int id)
+        private bool CategoryExists( string id )
         {
           return _context.Categories.Any(e => e.Id == id);
         }

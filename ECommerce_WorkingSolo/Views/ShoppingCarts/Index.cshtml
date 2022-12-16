@@ -1,0 +1,31 @@
+﻿@{
+  ViewData[ "Title" ] = "Index";
+  decimal total = 0;
+  foreach(var item in ViewBag.UsersCart.Cart)
+  {
+    total += item.Price;
+  }
+}
+
+<h1>@ViewBag.UsersName's Shopping Cart</h1>
+
+<div class="container">
+  @foreach (var item in ViewBag.UsersCart.Cart)
+  {
+    <a asp-action="Details" asp-controller="">
+      <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="@item.ImagePath" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">@item.Name</h5>
+          <h6>$@item.Price</h6>
+          <a asp-controller="Transactions" asp-action="RemoveFromCart" asp-route-cartId="@ViewBag.UsersCart.Id" asp-route-productId="@item.Id"><h5 class="btn btn-danger">Remove</h5></a>
+
+        </div>
+      </div>
+    </a>
+  }
+</div>
+
+<h4>Total: </h4>
+<hr/>
+<h4>@total</h4>

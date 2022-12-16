@@ -30,7 +30,7 @@
       {
         if (await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "shopper") || await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "admin") || await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "editor"))
         {
-          <h3 class="btn">Add to Cart <i class="fa-solid fa-cart-plus"></i></h3>
+          <a asp-controller="Transactions" asp-action="AddToCart" asp-route-productId="@Model.Id" asp-route-userId="@UserManager.GetUserAsync(User).Result.Id" class="btn"><h3>Add to Cart <i class="fa-solid fa-cart-plus"></i></h3></a>
         }
       }
     </div>

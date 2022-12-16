@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using ECommerce_WorkingSolo.Models;
@@ -29,6 +30,6 @@ public class ApplicationUser : IdentityUser
   [StringLength(250)]
   [Display(Name = "Zip Code")]
   public string ZipCode { get; set; }
-  //public List<Product> ShoppingCart { get; set; }
+  public string ShoppingCartId { get; set; }
 }
 

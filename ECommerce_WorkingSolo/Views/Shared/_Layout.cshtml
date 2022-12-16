@@ -1,4 +1,14 @@
-﻿<!DOCTYPE html>
+﻿@using ECommerce_WorkingSolo.Areas.Identity.Data;
+@using Microsoft.AspNetCore.Identity;
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+  var userResult = UserManager.GetUserAsync(User).Result;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -28,39 +38,50 @@
             </li>
             @*<partial name="categoriesDropdownPartial"  />*@
 
-@*            <li class="nav-item dropdown show">
-              <a class="dropdown-toggle nav-link" href="#" data-bs-toggle="dropdown">Categories</a>
-              <div class="dropdown-menu">
-                <a class="dropdown-item" asp-area="Admin" asp-controller="Categories" asp-action="Index">Categories</a>
-                <a class="dropdown-item" asp-area="Admin" asp-controller="Products" asp-action="Index">Products</a>
-              </div> 
+            @*            <li class="nav-item dropdown show">
+            <a class="dropdown-toggle nav-link" href="#" data-bs-toggle="dropdown">Categories</a>
+            <div class="dropdown-menu">
+            <a class="dropdown-item" asp-area="Admin" asp-controller="Categories" asp-action="Index">Categories</a>
+            <a class="dropdown-item" asp-area="Admin" asp-controller="Products" asp-action="Index">Products</a>
+            </div>
             </li>*@
 
-            <li class="nav-item">
-              <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-            </li>
+            @*            <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </li>*@
+
+
             <partial name="_AdminMenuPartial" />
           </ul>
-          <partial name="_LoginPartial" />
+          <ul class="navbar-nav">
+            @if (SignInManager.IsSignedIn(User) && await UserManager.IsInRoleAsync(userResult, "admin"))
+            {
+              <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCarts" asp-action="Index" asp-route-cartId="@userResult.ShoppingCartId" asp-route-userId="@userResult.Id"><i class="fa-solid fa-cart-shopping"></i></a>
+              </li>
+            }
+            <partial name="_LoginPartial" />
+            </ul>
 
+
+          </div>
         </div>
-      </div>
-    </nav>
-  </header>
-  <div class="container">
-    <main role="main" class="pb-3">
-      @RenderBody()
-    </main>
-  </div>
-
-  <footer class="border-top footer text-muted">
+      </nav>
+    </header>
     <div class="container">
-      &copy; 2022 - ECommerce_WorkingSolo - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+      <main role="main" class="pb-3">
+                  @RenderBody()
+      </main>
     </div>
-  </footer>
-  <script src="~/lib/jquery/dist/jquery.min.js"></script>
-  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="~/js/site.js" asp-append-version="true"></script>
-  @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
+
+    <footer class="border-top footer text-muted">
+      <div class="container">
+        &copy; 2022 - ECommerce_WorkingSolo - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+      </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+              @await RenderSectionAsync("Scripts", required: false)
+  </body>
+  </html>

@@ -1,0 +1,25 @@
+﻿@model ECommerce_WorkingSolo.Models.ShoppingCart;
+
+@using ECommerce_WorkingSolo.Areas.Identity.Data;
+@using Microsoft.AspNetCore.Identity;
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+  var userResult = UserManager.GetUserAsync(User).Result;
+}
+
+@if(SignInManager.IsSignedIn(User) && await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "shopper"))
+{
+  <div class="container">
+    <h1>@userResult.FirstName's Shopping Cart</h1>
+    <ul>
+@*      @foreach (var item in Model.Cart)
+      {
+        <li>@item.Name</li>
+      }*@
+      <li>This is a test. Can i see this?</li>
+    </ul>
+  </div>
+}
