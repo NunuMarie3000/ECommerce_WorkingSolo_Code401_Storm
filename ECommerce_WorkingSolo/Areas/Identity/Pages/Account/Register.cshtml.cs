@@ -122,10 +122,16 @@ namespace ECommerce_WorkingSolo.Areas.Identity.Pages.Account
         var user = CreateUser();
 
         user.FirstName = Input.FirstName; user.LastName = Input.LastName; user.Email= Input.Email; user.Address1 = Input.Address1; user.Address2 = Input.Address2; user.PhoneNumber = Input.PhoneNumber; user.ZipCode = Input.ZipCode;
+        // create new instance of empty shopping cart and add it to the new user
+        var userCart = new ShoppingCart();
+        //string newguid = Guid.NewGuid().ToString();
+        //userCart.Id = newguid;
+        userCart.Id = Guid.NewGuid().ToString();
+        userCart.UserID = user.Id;
+        user.ShoppingCartId = userCart.Id;
 
-        // test code
-
-        // test code
+        _context.ShoppingCart.Add(userCart);
+        await _context.SaveChangesAsync();
 
         await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -136,10 +142,7 @@ namespace ECommerce_WorkingSolo.Areas.Identity.Pages.Account
         if (result.Succeeded)
         {
           await _userManager.AddToRoleAsync(user, "Shopper");
-          // create new instance of empty shopping cart and add it to the new user
-          //var userCart = new ShoppingCart();
-          //userCart.UserID = user.Id;
-          //user.ShoppingCartId = userCart.Id;
+          
           _logger.LogInformation("User created a new account with password.");
 
           var userId = await _userManager.GetUserIdAsync(user);

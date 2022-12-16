@@ -27,7 +27,7 @@ namespace ECommerce_WorkingSolo.Controllers
     {
       //var eCommerceDbContext = _context.Products.Include(p => p.Category);
       //return View(await eCommerceDbContext.ToListAsync());
-      return View(await _context.Products.Include(p => p.Category).ToListAsync());
+      return View(await _context.Products.ToListAsync());
     }
 
     // GET: Products/Details/5
@@ -40,7 +40,6 @@ namespace ECommerce_WorkingSolo.Controllers
       }
 
       var product = await _context.Products
-          .Include(p => p.Category)
           .FirstOrDefaultAsync(m => m.Id == id);
       if (product == null)
       {

@@ -88,8 +88,9 @@ namespace ECommerceWorkingSolo.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ShoppingCartId")
-                        .HasColumnType("int");
+                    b.Property<string>("ShoppingCartId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -118,11 +119,8 @@ namespace ECommerceWorkingSolo.Migrations
 
             modelBuilder.Entity("ECommerce_WorkingSolo.Models.Category", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -138,40 +136,33 @@ namespace ECommerceWorkingSolo.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
-                });
+                    b.ToTable("Categories");
 
-            modelBuilder.Entity("ECommerce_WorkingSolo.Models.CategoryProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("CategoryProducts", (string)null);
+                    b.HasData(
+                        new
+                        {
+                            Id = "a92c6ebf-67a2-430b-bb70-934d7b533367",
+                            Description = "Browse our various antique figurines and action figures!",
+                            ImagePath = "./wwwroot/images/retro_action_figures.jpg",
+                            Name = "Figurines"
+                        },
+                        new
+                        {
+                            Id = "28838b5c-1f9b-40b3-90a5-266779ee2c3f",
+                            Description = "Category full of different retro gaming consoles: from the gameboy color to the original xbox!",
+                            ImagePath = "./wwwroot/images/retro_gaming_consoles.jpg",
+                            Name = "Gaming Consoles"
+                        });
                 });
 
             modelBuilder.Entity("ECommerce_WorkingSolo.Models.Product", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                    b.Property<string>("CategoryId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Condition")
                         .HasColumnType("int");
@@ -194,25 +185,55 @@ namespace ECommerceWorkingSolo.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ShoppingCartId")
-                        .HasColumnType("int");
+                    b.Property<string>("ShoppingCartId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("ShoppingCartId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "53dbaaf5-3b8d-42e1-af12-e10e779e27a9",
+                            CategoryId = "a92c6ebf-67a2-430b-bb70-934d7b533367",
+                            Condition = 5,
+                            Description = "Mint condition Storm figurine from the X-Men comic series",
+                            ImagePath = "./wwwroot/images/storm_retro_figurine.jpg",
+                            Name = "Storm X-Men Figurine",
+                            Price = 300.00m,
+                            Rating = 5
+                        },
+                        new
+                        {
+                            Id = "438ee5b7-0dde-4500-8868-a122dcd2a07a",
+                            CategoryId = "28838b5c-1f9b-40b3-90a5-266779ee2c3f",
+                            Condition = 3,
+                            Description = "Used Gameboy Advance Sp",
+                            ImagePath = "./wwwroot/images/gameboyadvancesp_gaming_console.jpg",
+                            Name = "Gameboy Advance Sp",
+                            Price = 150.00m,
+                            Rating = 3
+                        },
+                        new
+                        {
+                            Id = "8aa4d1a2-bd54-4f5b-8811-b754e337790f",
+                            CategoryId = "28838b5c-1f9b-40b3-90a5-266779ee2c3f",
+                            Condition = 3,
+                            Description = "Gently used Gameboy Color!",
+                            ImagePath = "./wwwroot/gameboycolor_gaming_console.jpg",
+                            Name = "Gameboy Color",
+                            Price = 250.00m,
+                            Rating = 4
+                        });
                 });
 
             modelBuilder.Entity("ECommerce_WorkingSolo.Models.ShoppingCart", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserID")
                         .IsRequired()
@@ -220,7 +241,7 @@ namespace ECommerceWorkingSolo.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ShoppingCart", (string)null);
+                    b.ToTable("ShoppingCart");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -360,28 +381,11 @@ namespace ECommerceWorkingSolo.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ECommerce_WorkingSolo.Models.CategoryProduct", b =>
-                {
-                    b.HasOne("ECommerce_WorkingSolo.Models.Category", null)
-                        .WithMany("CategoryProducts")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ECommerce_WorkingSolo.Models.Product", b =>
                 {
-                    b.HasOne("ECommerce_WorkingSolo.Models.Category", "Category")
-                        .WithMany("ProductsList")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ECommerce_WorkingSolo.Models.ShoppingCart", null)
                         .WithMany("Cart")
                         .HasForeignKey("ShoppingCartId");
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -433,13 +437,6 @@ namespace ECommerceWorkingSolo.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ECommerce_WorkingSolo.Models.Category", b =>
-                {
-                    b.Navigation("CategoryProducts");
-
-                    b.Navigation("ProductsList");
                 });
 
             modelBuilder.Entity("ECommerce_WorkingSolo.Models.ShoppingCart", b =>

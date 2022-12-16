@@ -1,5 +1,5 @@
 ﻿@page
-@model ECommerce_WorkingSolo.Areas.Identity.Pages.Account.Manage.ShoppingCartModel
+@model ECommerce_WorkingSolo.Models.ShoppingCart;
 
 @using Microsoft.AspNetCore.Identity;
 
@@ -14,5 +14,12 @@
 {
   <div class="container">
     <h1>@userResult.FirstName's Shopping Cart</h1>
+    <ul>
+@*      @foreach (var item in Model.Cart)
+      {
+        <li>@item.Name</li>
+      }*@
+      <li>This is a test. Can i see this?</li>
+    </ul>
   </div>
 }

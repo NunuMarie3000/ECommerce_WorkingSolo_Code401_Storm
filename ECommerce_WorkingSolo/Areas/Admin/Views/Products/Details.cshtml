@@ -23,7 +23,8 @@
       @Html.DisplayName("Category Name")
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.Category.Name)
+      @*@Html.DisplayFor(model => model.Category.Name)*@
+      <strong>@ViewBag.CategoryName</strong>
     </dd>
     <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.Price)

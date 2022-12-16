@@ -1,20 +1,22 @@
-﻿using Microsoft.Build.Framework;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ECommerce_WorkingSolo.Models
 {
   public class Product
   {
+    [Key]
     public string Id { get; set; }
     [Required]
     public string Name { get; set; }
-    public Category Category { get; set; }
+    [ForeignKey("CategoryId")]
     public string CategoryId { get; set; }
+    //public Category Category { get; set; }
     public decimal Price { get; set; }
     public string Description { get; set; } 
     public Condition Condition { get; set; }
     public Rating Rating { get; set; }
     public string ImagePath { get; set; }
-    
   }
   public enum Condition
   {

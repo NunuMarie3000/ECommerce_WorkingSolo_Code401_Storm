@@ -32,9 +32,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     {
       if (categoryId != null)
       {
-        ViewBag.CategoryId = categoryId;
-
-        List<Product> list = await (from itm in _context.Products.Include(p => p.Category)
+        List<Product> list = await (from itm in _context.Products
                                     where itm.CategoryId == categoryId
                                     select new Product
                                     {
@@ -42,7 +40,6 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
                                       Name = itm.Name,
                                       Id = itm.Id,
                                       Condition = itm.Condition,
-                                      Category = itm.Category,
                                       Description = itm.Description,
                                       ImagePath = itm.ImagePath,
                                       Price = itm.Price,
@@ -50,10 +47,12 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
                                     }).ToListAsync();
 
         ViewBag.CategoryId = categoryId;
+        var cat = _context.Categories.Where(c=>c.Id == categoryId).FirstOrDefault();
+        ViewBag.CategoryName = cat.Name;
         return View(list);
       }
 
-      return View(await _context.Products.Include(p => p.Category).ToListAsync());
+      return View(await _context.Products.ToListAsync());
     }
 
     // GET: Admin/Products/Details/5
@@ -71,12 +70,13 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
       var catid = product.CategoryId;
 
       var category = await _context.Categories.Where(cat => cat.Id== catid).FirstOrDefaultAsync();
-      product.Category = category;
+      product.CategoryId = category.Id;
 
       if (product == null)
       {
         return NotFound();
       }
+      ViewBag.CategoryName = category.Name;
 
       return View(product);
     }
@@ -110,9 +110,10 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
 
       if (ModelState.IsValid)
       {
-        product.Category = cat;
+        //product.Category = cat;
+        product.CategoryId = cat.Id;
         // also need to add this product to the category's product list
-        cat.ProductsList.Add(product);
+        //cat.ProductsList.Add(product);
 
         _context.Add(product);
         await _context.SaveChangesAsync();

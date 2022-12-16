@@ -353,6 +353,6 @@ MigrationBackup/
 appsettings.json
 
 #Migrations
-20221206190117_AddAdminAccount.cs
-20221206195231_AddEditorAccount.cs
-20221212190209_AddShopperRole.cs
+20221215020434_AddAdminAccount.cs
+20221215020552_AddEditorAccount.cs
+20221215020647_AddShopperRole.cs

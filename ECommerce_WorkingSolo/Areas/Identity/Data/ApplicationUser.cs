@@ -30,7 +30,6 @@ public class ApplicationUser : IdentityUser
   [StringLength(250)]
   [Display(Name = "Zip Code")]
   public string ZipCode { get; set; }
-  public int ShoppingCartId { get; set; }
-  public string ShoppingCartIdString { get; set; }
+  public string ShoppingCartId { get; set; }
 }
 
