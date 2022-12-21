@@ -1,0 +1,21 @@
+﻿@{
+  ViewData[ "Title" ] = "Index";
+}
+
+<h1>Users</h1>
+
+<div class="container">
+  <div>
+    <ul>
+      @foreach (var user in ViewBag.AllUsers)
+      {
+        <li>@user.UserName</li>
+      }
+    </ul>
+  </div>
+
+  <div>
+    <partial name="_CreateEmailPartial" model="@new Email()"/>
+  </div>
+</div>
+
