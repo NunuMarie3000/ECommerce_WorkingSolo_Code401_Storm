@@ -1,0 +1,25 @@
+﻿@model ECommerce_WorkingSolo.Models.Email;
+
+<form class="row" asp-action="CreateEmail" formenctype="multipart/form-data">
+      <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label asp-for="toEmail" class="control-label"></label>
+          <input asp-for="toEmail" class="form-control" />
+          <span asp-validation-for="toEmail" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+          <label asp-for="subject" class="control-label"></label>
+          <input asp-for="subject" class="form-control" />
+          <span asp-validation-for="subject" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+          <label asp-for="message" class="control-label"></label>
+          <input asp-for="message" class="form-control" />
+          <span asp-validation-for="message" class="text-danger"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <input type="submit" value="CreateEmail" class="btn btn-primary" />
+      </div>
+    </form>

@@ -9,6 +9,7 @@ using ECommerce_WorkingSolo.Areas.Admin.Models.Interfaces;
 using ECommerce_WorkingSolo.Areas.Admin.Models.Options;
 using ECommerce_WorkingSolo.Areas.Identity.Pages.Account;
 using ECommerce_WorkingSolo.Models;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ECommerceDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ECommerceDbContextConnection' not found.");
@@ -16,7 +17,7 @@ var connectionString = builder.Configuration.GetConnectionString("ECommerceDbCon
 builder.Services.AddDbContext<ECommerceDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
   .AddRoles<IdentityRole>()
   .AddEntityFrameworkStores<ECommerceDbContext>();
 
@@ -25,22 +26,16 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddRazorPages();
 
-//builder.Services.AddAuthorization(options =>
-//{
-//  options.AddPolicy("readpolicy", builder => builder.RequireRole("Admin", "Editor", "Shopper"));
-//  options.AddPolicy("writepolicy", builder => builder.RequireRole("Admin", "Editor"));
-//});
-
-// getting rid of making values not explicitly stated [required] from being required
-// so ModelState.IsValid is true when we create a new category and don't include a list of categoryproducts
 builder.Services.AddControllers(
     options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 
 builder.Services.AddTransient<IImageService, ImageService>();
 
-//builder.Services.AddTransient<IUserRoleStore<ApplicationUser>, UserRoleStore>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("AzureStorageConfig"));
+
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration.GetSection("SendGridConfig"));
 
 var app = builder.Build();
 
