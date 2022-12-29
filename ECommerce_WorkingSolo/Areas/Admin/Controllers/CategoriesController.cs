@@ -112,6 +112,7 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
     {
       if (ModelState.IsValid)
       {
+        category.Id = Guid.NewGuid().ToString();
         _context.Add(category);
 
         await _context.SaveChangesAsync();

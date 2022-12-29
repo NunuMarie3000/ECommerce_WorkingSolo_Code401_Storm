@@ -42,4 +42,5 @@ public class ECommerceDbContext: IdentityDbContext<ApplicationUser>
   public DbSet<Category> Categories { get; set; }
   public DbSet<Product> Products { get; set; }
   public DbSet<ShoppingCart> ShoppingCart { get; set; }
+  public DbSet<UserBillingInfoModel> UserBillingInfo { get; set; }
 }

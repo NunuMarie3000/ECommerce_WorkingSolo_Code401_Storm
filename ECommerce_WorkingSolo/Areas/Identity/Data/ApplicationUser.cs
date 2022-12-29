@@ -25,7 +25,7 @@ public class ApplicationUser : IdentityUser
   [Display(Name = "Address 1")]
   public string Address1 { get; set; }
   [StringLength(250)]
-  [Display(Name = "Address 1")]
+  [Display(Name = "Address 2")]
   public string Address2 { get; set; }
   [StringLength(250)]
   [Display(Name = "Zip Code")]

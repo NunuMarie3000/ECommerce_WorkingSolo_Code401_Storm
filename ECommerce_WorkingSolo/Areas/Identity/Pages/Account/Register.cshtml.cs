@@ -130,7 +130,24 @@ namespace ECommerce_WorkingSolo.Areas.Identity.Pages.Account
         userCart.UserID = user.Id;
         user.ShoppingCartId = userCart.Id;
 
+        // imma create an instance of UserBillingInfoModel with all the same info so i can update this if the billing info changes, this way we can always keep the change on file
+
+
+        var userBillingInfo = new UserBillingInfoModel();
+
+        userBillingInfo.Id = Guid.NewGuid().ToString();
+        userBillingInfo.FirstName = Input.FirstName;
+        userBillingInfo.LastName = Input.LastName;
+        userBillingInfo.Email = Input.Email;
+        userBillingInfo.Address1 = Input.Address1;
+        userBillingInfo.Address2 = Input.Address2;
+        userBillingInfo.PhoneNumber = Input.PhoneNumber;
+        userBillingInfo.ZipCode = Input.ZipCode;
+        userBillingInfo.UsersOGID = user.Id;
+
         _context.ShoppingCart.Add(userCart);
+        _context.UserBillingInfo.Add(userBillingInfo);
+
         await _context.SaveChangesAsync();
 
         await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);

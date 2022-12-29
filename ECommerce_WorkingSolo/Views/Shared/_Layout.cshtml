@@ -60,6 +60,12 @@
                 <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCarts" asp-action="Index" asp-route-cartId="@userResult.ShoppingCartId" asp-route-userId="@userResult.Id"><i class="fa-solid fa-cart-shopping"></i></a>
               </li>
             }
+            @if (SignInManager.IsSignedIn(User) && await UserManager.IsInRoleAsync(userResult, "shopper"))
+            {
+              <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCarts" asp-action="Index" asp-route-cartId="@userResult.ShoppingCartId" asp-route-userId="@userResult.Id"><i class="fa-solid fa-cart-shopping"></i></a>
+              </li>
+            }
             <partial name="_LoginPartial" />
             </ul>
 

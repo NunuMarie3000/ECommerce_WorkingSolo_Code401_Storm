@@ -1,0 +1,138 @@
+﻿@model ECommerce_WorkingSolo.Models.UserBillingInfoModel;
+
+@{
+  var user = ViewBag.User;
+}
+
+@if (ViewBag.UserBilling == null)
+{
+  <h4>Does this billing information look correct?</h4>
+
+  <form class="row" asp-action="UpdateBilling" formenctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-md">
+      <div class="form-group">
+        <label hidden asp-for="Id" class="control-label"></label>
+        <input hidden asp-for="Id" class="form-control" value="@user.Id" />
+        <span asp-validation-for="Id" class="text-danger"></span>
+      </div>
+      <div class="form-group">
+        <label hidden asp-for="UsersOGID" class="control-label"></label>
+        <input hidden asp-for="UsersOGID" class="form-control" value="@user.UsersOGID" />
+        <span asp-validation-for="UsersOGID" class=" text-danger"></span>
+      </div>
+
+      <div class="form-group">
+        <label asp-for="FirstName" class="control-label"></label>
+        <input asp-for="FirstName" class="form-control" value="@user.FirstName" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+      </div>
+
+      <div class="form-group">
+        <label asp-for="LastName" class="control-label"></label>
+        <input asp-for="LastName" class="form-control" value="@user.LastName" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+      </div>
+      <div class="form-group">
+        <label asp-for="Address1" class="control-label"></label>
+        <input asp-for="Address1" class="form-control" value="@user.Address1" />
+        <span asp-validation-for="Address1" class="text-danger"></span>
+      </div>
+      <div class="form-group">
+        <label asp-for="Address2" class="control-label"></label>
+        <input asp-for="Address2" class="form-control" value="@user.Address2" />
+        <span asp-validation-for="Address2" class="text-danger"></span>
+      </div>
+      <div class="form-group">
+        <label asp-for="ZipCode" class="control-label"></label>
+        <input asp-for="ZipCode" class="form-control" value="@user.ZipCode" />
+        <span asp-validation-for="ZipCode" class="text-danger"></span>
+      </div>
+      <div class="form-group">
+        <label asp-for="Email" class="control-label"></label>
+        <input asp-for="Email" class="form-control" value="@user.Email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+      </div>
+      <div class="form-group">
+        <label asp-for="PhoneNumber" class="control-label"></label>
+        <input asp-for="PhoneNumber" class="form-control" value="@user.PhoneNumber" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+      </div>
+
+    </div>
+    <div class="form-group">
+      <input type="submit" value="UpdateBilling" class="btn btn-primary" />
+    </div>
+  </form>
+}
+else
+{
+  <h4>Billing Info</h4>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>
+          @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+      </tr>
+      <tr>
+        <th>
+          @Html.DisplayNameFor(model => model.LastName)
+        </th>
+      </tr>
+      <tr>
+        <th>
+          @Html.DisplayNameFor(model => model.Address1)
+        </th>
+      </tr>
+      <tr>
+        <th>
+          @Html.DisplayNameFor(model => model.Address2)
+        </th>
+      </tr>
+      <tr>
+        <th>
+          @Html.DisplayNameFor(model => model.ZipCode)
+        </th>
+      </tr>
+      <tr>
+        <th>
+          @Html.DisplayNameFor(model => model.Email)
+        </th>
+      </tr>
+      <tr>
+        <th>
+          @Html.DisplayNameFor(model => model.PhoneNumber)
+        </th>
+      </tr>
+        @*<th></th>*@
+      @*</tr>*@
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          @Html.DisplayFor(modelItem => modelItem.FirstName)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => modelItem.LastName)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => modelItem.Address1)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => modelItem.Address2)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => modelItem.ZipCode)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => modelItem.Email)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => modelItem.PhoneNumber)
+        </td>
+      </tr>
+    </tbody>
+  </table>
+}

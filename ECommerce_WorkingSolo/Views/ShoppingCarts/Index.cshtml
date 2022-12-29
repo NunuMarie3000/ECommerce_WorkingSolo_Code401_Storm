@@ -8,6 +8,7 @@
 }
 
 <h1>@ViewBag.UsersName's Shopping Cart</h1>
+<hr/><br/>
 
 <div class="container">
   @foreach (var item in ViewBag.UsersCart.Cart)
@@ -28,4 +29,6 @@
 
 <h4>Total: </h4>
 <hr/>
-<h4>@total</h4>
+<h4>$@total</h4>
+
+<a asp-controller="Transactions" asp-action="CheckoutPage" asp-route-cartId="@ViewBag.UsersCart.Id"><h3 class="btn btn-primary">Checkout</h3></a>

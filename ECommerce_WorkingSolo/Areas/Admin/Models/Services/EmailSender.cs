@@ -2,9 +2,13 @@
 using ECommerce_WorkingSolo.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 using System.Diagnostics;
+using System.IO;
+using MailKit;
+using MailKit.Net.Smtp;
+using MimeKit;
+using RestSharp;
+using RestSharp.Authenticators;
 
 namespace ECommerce_WorkingSolo.Areas.Admin.Models.Services
 {
@@ -19,61 +23,38 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Models.Services
       _context = context;
     }
 
-    public AuthMessageSenderOptions Options { get; } // set with secret manager
+    public AuthMessageSenderOptions Options { get; }
 
     public async Task SendEmailAsync( string toEmail, string subject, string message )
     {
-      if (string.IsNullOrEmpty(Options.SendGridKey))
-      {
-        throw new Exception("Null SendGridKey");
-      }
-      //await Execute(Options.SendGridKey, subject, message, toEmail);
-      Execute().Wait();
+      SendMessageSmtp(Options.MailGunKey, toEmail, subject, message);
     }
 
-    public async Task Execute()
+    public static void SendMessageSmtp(string mailgunkey,string toEmail, string subject, string message )
     {
-      var apiKey = Options.SendGridKey;
-      var client = new SendGridClient(apiKey);
-      var from = new EmailAddress("admin@retrogaming.com", "Example User");
-      var subJect = "Sending with SendGrid is Fun";
-      var to = new EmailAddress("admin@retrogaming.com", "Example User");
-      var plainTextContent = "and easy to do anywhere, even with C#";
-      var htmlContent = "<strong>and easy to do anywhere, even with C#</strong>";
-      var msg = MailHelper.CreateSingleEmail(from, to, subJect, plainTextContent, htmlContent);
-      var response = await client.SendEmailAsync(msg);
-
-      if(client != null)
+      // Compose a message
+      MimeMessage mail = new MimeMessage();
+      mail.From.Add(new MailboxAddress("Retro Gaming", "admin@retrogaming.com"));
+      mail.To.Add(new MailboxAddress("Excited User", toEmail));
+      mail.Subject = subject;
+      mail.Body = new TextPart("plain")
       {
-        await client.SendEmailAsync(msg);
-      }
-      else
-      {
-        Trace.TraceError("Failed to create web transport");
-        await Task.FromResult(0);
-      }
-    }
-
-    public async Task Execute( string apiKey, string subject, string message, string toEmail )
-    {
-      var client = new SendGridClient(apiKey);
-      var msg = new SendGridMessage()
-      {
-        //From = new EmailAddress("admin@retrogaming.com", "Password Recovery"),
-        From = new EmailAddress("test@example.com", "Example User"),
-        Subject = subject,
-        PlainTextContent = message,
-        HtmlContent = message
+        Text = message,
       };
-      msg.AddTo(new EmailAddress(toEmail));
 
-      // Disable click tracking.
-      // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
-      msg.SetClickTracking(false, false);
-      var response = await client.SendEmailAsync(msg);
-      _logger.LogInformation(response.IsSuccessStatusCode
-                             ? $"Email to {toEmail} queued successfully!"
-                             : $"Failure Email to {toEmail}");
+      // Send it!
+      using (var client = new SmtpClient())
+      {
+        // XXX - Should this be a little different?
+        client.ServerCertificateValidationCallback = ( s, c, h, e ) => true;
+
+        client.Connect("smtp.mailgun.org", 587, false);
+        client.AuthenticationMechanisms.Remove("XOAUTH2");
+        client.Authenticate("postmaster@sandbox6a11697c0c91439f8336d3c0ce4c319e.mailgun.org", mailgunkey);
+
+        client.Send(mail);
+        client.Disconnect(true);
+      }
     }
 
 

@@ -108,6 +108,8 @@ namespace ECommerce_WorkingSolo.Areas.Admin.Controllers
       if (cat == null)
         return View("Index");
 
+      product.Id = Guid.NewGuid().ToString();
+
       if (ModelState.IsValid)
       {
         //product.Category = cat;

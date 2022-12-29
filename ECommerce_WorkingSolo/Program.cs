@@ -17,7 +17,7 @@ var connectionString = builder.Configuration.GetConnectionString("ECommerceDbCon
 builder.Services.AddDbContext<ECommerceDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
   .AddRoles<IdentityRole>()
   .AddEntityFrameworkStores<ECommerceDbContext>();
 
@@ -35,7 +35,7 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("AzureStorageConfig"));
 
-builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration.GetSection("SendGridConfig"));
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration.GetSection("MailGunConfig"));
 
 var app = builder.Build();
 
